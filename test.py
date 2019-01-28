@@ -226,7 +226,7 @@ if __name__ == '__main__':
     for num in xrange(imageNumber):
         # im_name = str(file[0][0].encode('utf-8'))[2:-1] 
         im_name = "{}.jpg".format(num)
-        Image_Path = "./data/{}".format(im_name)
+        Image_Path = "./img/{}".format(im_name)
         print(Image_Path)
         image = cv2.imread(Image_Path,cv2.IMREAD_COLOR)
         max_im_shrink = (0x7fffffff / 200.0 / (image.shape[0] *image.shape[1])) ** 0.5 # the max size of input image for caffe
@@ -239,7 +239,7 @@ if __name__ == '__main__':
         det4 = multi_scale_test_pyramid(image, max_im_shrink)
         det = np.row_stack((det0, det1, det2, det3, det4))
         dets = bbox_vote(det)
-        f = open("./res/{}.txt", num, 'w')
+        f = open("./res/{}.txt".format(num), 'w')
         # f = open(save_path + str(event[0][0].encode('utf-8'))[2:-1]  +'/' + im_name + '.txt', 'w')
         write_to_txt(f, dets)
         print('finished %d / %d' % (num, imageNumber));
