@@ -191,7 +191,7 @@ def bbox_vote(det):
 
 
 def write_to_txt(f, det):
-    f.write('{:s}\n'.format(str(event[0][0].encode('utf-8'))[2:-1] + '/' + im_name + '.jpg'))
+    # f.write('{:s}\n'.format(str(event[0][0].encode('utf-8'))[2:-1] + '/' + im_name + '.jpg'))
     f.write('{:d}\n'.format(det.shape[0]))
     for i in range(det.shape[0]):
         xmin = det[i][0]
