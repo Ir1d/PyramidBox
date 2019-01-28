@@ -204,44 +204,44 @@ def write_to_txt(f, det):
 
 
 if __name__ == '__main__':
-    subset = 'val' # val or test
-    if subset is 'val':
-        wider_face = sio.loadmat('/home/guoqiushan/share/workspace/caffe-ssd-s3fd/sfd_test_code/WIDER_FACE/wider_face_val.mat')    # Val set
-    else:
-        wider_face = sio.loadmat('/home/guoqiushan/share/workspace/caffe-ssd-s3fd/sfd_test_code/WIDER_FACE/wider_face_test.mat')   # Test set
-    event_list = wider_face['event_list']
-    file_list = wider_face['file_list']
-    del wider_face
+    # subset = 'val' # val or test
+    # if subset is 'val':
+    #     wider_face = sio.loadmat('/home/guoqiushan/share/workspace/caffe-ssd-s3fd/sfd_test_code/WIDER_FACE/wider_face_val.mat')    # Val set
+    # else:
+    #     wider_face = sio.loadmat('/home/guoqiushan/share/workspace/caffe-ssd-s3fd/sfd_test_code/WIDER_FACE/wider_face_test.mat')   # Test set
+    # event_list = wider_face['event_list']
+    # file_list = wider_face['file_list']
+    # del wider_face
 
-    Path = '/home/tmp_data_dir/zhaoyu/wider_face/WIDER_val/images/'
-    save_path = '/home/guoqiushan/share/workspace/caffe-ssd-s3fd-focal/sfd_test_code/WIDER_FACE/eval_tools_old-version/tmp_haha' + '_' + subset + '/'
+    # Path = '/home/tmp_data_dir/zhaoyu/wider_face/WIDER_val/images/'
+    # save_path = '/home/guoqiushan/share/workspace/caffe-ssd-s3fd-focal/sfd_test_code/WIDER_FACE/eval_tools_old-version/tmp_haha' + '_' + subset + '/'
 
 
-    for index, event in enumerate(event_list):
-        filelist = file_list[index][0]
-        if not os.path.exists(save_path + str(event[0][0].encode('utf-8'))[2:-1] ):
-            os.makedirs(save_path + str(event[0][0].encode('utf-8'))[2:-1] )
-        for num, file in enumerate(filelist):
-            
-            im_name = str(file[0][0].encode('utf-8'))[2:-1] 
-            Image_Path = Path + str(event[0][0].encode('utf-8'))[2:-1] +'/'+im_name[:] + '.jpg'
-            print(Image_Path)
-            image = cv2.imread(Image_Path,cv2.IMREAD_COLOR)
+    # for index, event in enumerate(event_list):
+    #     filelist = file_list[index][0]
+    #     if not os.path.exists(save_path + str(event[0][0].encode('utf-8'))[2:-1] ):
+    #         os.makedirs(save_path + str(event[0][0].encode('utf-8'))[2:-1] )
 
-            max_im_shrink = (0x7fffffff / 200.0 / (image.shape[0] * image.shape[1])) ** 0.5 # the max size of input image for caffe
-            max_im_shrink = 3 if max_im_shrink > 3 else max_im_shrink
-            
-            shrink = max_im_shrink if max_im_shrink < 1 else 1
-
-            det0 = detect_face(image, shrink)  # origin test
-            det1 = flip_test(image, shrink)    # flip test
-            [det2, det3] = multi_scale_test(image, max_im_shrink)#min(2,1400/min(image.shape[0],image.shape[1])))  #multi-scale test
-            det4 = multi_scale_test_pyramid(image, max_im_shrink)
-            det = np.row_stack((det0, det1, det2, det3, det4))
-
-            dets = bbox_vote(det)
-            f = open(save_path + str(event[0][0].encode('utf-8'))[2:-1]  + '/' + im_name + '.txt', 'w')
-            write_to_txt(f, dets)
-
-            print('event:%d num:%d' % (index + 1, num + 1))
+    imageNumber = 2
+    for num in xrange(imageNumber):
+        # im_name = str(file[0][0].encode('utf-8'))[2:-1] 
+        im_name = "{}.jpg".format(num)
+        Image_Path = "./data/{}".format(im_name)
+        print(Image_Path)
+        image = cv2.imread(Image_Path,cv2.IMREAD_COLOR)
+        max_im_shrink = (0x7fffffff / 200.0 / (image.shape[0] *image.shape[1])) ** 0.5 # the max size of input image for caffe
+        max_im_shrink = 3 if max_im_shrink > 3 else max_im_shrink
+        
+        shrink = max_im_shrink if max_im_shrink < 1 else 1
+        det0 = detect_face(image, shrink)  # origin test
+        det1 = flip_test(image, shrink)    # flip test
+        [det2, det3] = multi_scale_test(image, max_im_shrink)#min(21400/min(image.shape[0],image.shape[1])))  #multi-scale test
+        det4 = multi_scale_test_pyramid(image, max_im_shrink)
+        det = np.row_stack((det0, det1, det2, det3, det4))
+        dets = bbox_vote(det)
+        f = open("./res/{}.txt", num, 'w')
+        # f = open(save_path + str(event[0][0].encode('utf-8'))[2:-1]  +'/' + im_name + '.txt', 'w')
+        write_to_txt(f, dets)
+        print('finished %d / %d' % (num, imageNumber));
+        # print('event:%d num:%d' % (index + 1, num + 1))
 
